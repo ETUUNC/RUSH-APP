@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kayıt Formu</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- styles moved to static/style.css -->
+</head>
+<body>
+    <div class="container">
+        <h2>Kayıt Formu</h2>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="flash">
+              <ul>
+                {% for msg in messages %}
+                  <li>{{ msg }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('register') }}" method="POST">
+          {{ form.hidden_tag() }}
+          <label for="name">Ad Soyad:</label>
+          {{ form.name(size=32) }}
+
+          <label for="email">E-Posta:</label>
+          {{ form.email(size=32) }}
+
+          <label for="phone">Telefon:</label>
+          {{ form.phone(size=20, pattern="^0\\d{10}$", title="0 ile başlayan 11 haneli bir numara giriniz", required=True) }}
+
+
+          {{ form.submit() }}
+        </form>
+
+        <a class="back" href="{{ url_for('index') }}">← Ana Sayfaya Dön</a>
+    </div>
+</body>
+</html>

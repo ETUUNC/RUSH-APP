@@ -1,0 +1,265 @@
+/* Genel ayarlar */
+:root{
+    --brand: #004a66; /* one more step darker */
+    --brand-dark: #00384f; /* darker hover shade */
+    --panel: #012f3f; /* darker panel */
+    --panel-2: #011f2b; /* even darker secondary panel */
+    --muted-light: #bfdfe9; /* slightly less bright */
+    --text-on-dark: #ffffff;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    /* Background image with a subtle gradient overlay for depth */
+    background-image: linear-gradient(rgba(1,47,63,0.55), rgba(1,47,63,0.65)), url('/static/images/rush1.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    color: var(--text-on-dark);
+}
+
+/* Başlık */
+/* Başlık (sadeleştirildi) */
+header {
+    /* use a slightly transparent brand color so the header appears lighter */
+    background: rgba(0, 74, 102, 0.72); /* semi-transparent version of --brand */
+    color: var(--text-on-dark);
+    padding: 20px;
+    text-align: center;
+    /* remove extra visual effects so the header feels simpler */
+    background-image: none;
+    backdrop-filter: none;
+    box-shadow: none;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* (hero styles removed - header restored to original look) */
+
+.logo {
+    font-weight: 700; /* slightly less bold */
+    letter-spacing: 1px;
+    font-size: 1.6rem;
+}
+.logo .bolt {
+    margin-left: 4px; /* tighter spacing */
+    color: #c7942e; /* deeper gold */
+    font-size: 2.0rem; /* larger lightning icon */
+    vertical-align: middle;
+    line-height: 0.9;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+.header-photo {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 20px;
+    /* ensure content centers horizontally within header */
+    justify-content: center;
+}
+.header-photo-left {
+    width: 96px;
+    height: 96px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+.logo {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 4px;
+}
+
+.tagline {
+    color: rgba(255,255,255,0.88);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+}
+.gallery img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.emph-link {
+    color: #ffcf66; /* slightly deeper highlight */
+    background: rgba(255,255,255,0.03);
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 700;
+}
+.emph-link:hover { background: rgba(255,255,255,0.06); }
+@media (max-width: 800px) {
+    .gallery { grid-template-columns: repeat(2, 1fr); }
+    .gallery img { height: 120px; }
+}
+@media (max-width: 420px) {
+    .gallery { grid-template-columns: 1fr; }
+    .gallery img { height: 200px; }
+}
+
+/* Ana içerik bölümleri */
+section {
+    margin: 40px auto;
+    width: 80%;
+    max-width: 1100px;
+    padding: 20px;
+    /* translucent panels so the page background is visible */
+    background: rgba(1,47,63,0.72);
+    color: var(--text-on-dark);
+    border-radius: 8px;
+    box-shadow: 0px 6px 18px rgba(0,0,0,0.35);
+    backdrop-filter: blur(4px);
+}
+
+/* Buton */
+a.button, input[type="submit"] {
+    display: inline-block;
+    padding: 12px 24px;
+    margin: 10px 0;
+    background: var(--brand);
+    color: var(--text-on-dark);
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+    cursor: pointer;
+    font-weight: bold;
+    border: none;
+}
+
+a.button:hover, input[type="submit"]:hover {
+    background: var(--brand-dark);
+}
+
+/* Tablo (admin paneli için) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: var(--panel);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    text-align: left;
+    color: var(--text-on-dark);
+}
+
+th {
+    background: var(--brand);
+    color: var(--text-on-dark);
+}
+
+tr:nth-child(even) {
+    background: rgba(255,255,255,0.03);
+}
+
+/* Form kutusu */
+.container {
+    width: 400px;
+    margin: 40px auto;
+    /* lighter translucent container so background peeks through */
+    background: rgba(1,31,43,0.86);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0px 6px 12px rgba(0,0,0,0.35);
+    color: var(--text-on-dark);
+}
+
+/* Login panel overrides */
+.login {
+    max-width: 420px;
+    margin: 50px auto;
+    padding: 20px;
+    background: var(--panel-2);
+    border-radius: 8px;
+    color: var(--text-on-dark);
+}
+
+.login input[type="text"], .login input[type="password"], .login input[type="email"] {
+    background: rgba(255,255,255,0.02);
+    color: var(--text-on-dark);
+    border: 1px solid rgba(255,255,255,0.18);
+}
+
+.login label { color: var(--text-on-dark); }
+
+.login .flash { background: rgba(255,243,205,0.06); color: var(--text-on-dark); }
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 12px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 5px;
+    background: rgba(255,255,255,0.04);
+    color: var(--text-on-dark);
+}
+
+input::placeholder, input::-webkit-input-placeholder { color: rgba(255,255,255,0.54); }
+input:-ms-input-placeholder { color: rgba(255,255,255,0.54); }
+
+/* Ödeme durumu renkleri: use classes on the element */
+.status { font-weight: bold; }
+.status-bekliyor { color: darkorange; }
+.status-odendi { color: #2fb85c; }
+.status-iptal { color: #e04b4b; }
+
+/* Flash message style */
+.flash { background: rgba(255,243,205,0.06); border: 1px solid rgba(255,235,160,0.08); padding: 10px; margin-bottom: 15px; color: var(--text-on-dark); }
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+    section, .container { width: 94%; margin: 16px auto; padding: 12px; }
+    .container { width: calc(100% - 32px); }
+    table { font-size: 14px; }
+    a.button, input[type="submit"] { width: 100%; box-sizing: border-box; }
+    
+}
+
+/* Subtle admin link (low visual priority) */
+.admin-link {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-size: 0.9em;
+    border-bottom: 1px dashed rgba(255,255,255,0.06);
+}
+.admin-link:hover { color: rgba(255,255,255,0.9); }

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RUSH</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- styles moved to static/style.css -->
+    </head>
+<body>
+    <header>
+      <div class="header-left">
+        <picture>
+          <source srcset="{{ url_for('static', filename='images/rush.jpg') }}" type="image/jpeg">
+          <img src="{{ url_for('static', filename='images/header-photo.svg') }}" alt="Rush" class="header-photo-left">
+        </picture>
+        <div>
+          <div class="tagline">Sağlıklı yaşam için<br>doğru adres</div>
+        </div>
+      </div>
+    {% if admin_logged_in %}
+    <form method="post" action="{{ url_for('logout') }}" style="display:inline; margin-left:20px;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="button">Çıkış Yap</button>
+    </form>
+    {% endif %}
+    </header>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">
+          <ul>
+            {% for msg in messages %}
+              <li>{{ msg }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <section>
+        <h2>Hakkımızda</h2>
+  <p><a href="https://www.milenyumkart.com/@milenyu3427" class="emph-link" target="_blank" rel="noopener noreferrer">Rush Spor Salonu</a>, modern ekipmanları ve uzman antrenörleriyle sizlere hizmet vermektedir.</p>
+  <p>Çalışma Saatleri</p>
+  <p>Hafta içi: 06:00 - 00:00</p>
+  <p>Cumartesi: 08:00 - 16:00</p>
+        <div class="gallery">
+          <img src="{{ url_for('static', filename='images/rush4.jpg') }}" alt="rush4">
+          <img src="{{ url_for('static', filename='images/rush5.jpg') }}" alt="rush5">
+          <img src="{{ url_for('static', filename='images/rush6.jpg') }}" alt="rush6">
+          <img src="{{ url_for('static', filename='images/rush8.jpg') }}" alt="rush8">
+        </div>
+    </section>
+
+    <section>
+        <h2>Kayıt Ol</h2>
+        <p>Form doldurarak hemen kayıt olabilirsiniz.</p>
+        <a href="{{ url_for('register') }}" class="button">Kayıt Formu</a>
+    </section>
+
+
+    <section>
+        <h2>Ders Programı</h2>
+        <p>Yakında burada grup dersleri ve etkinlik takvimi yayınlanacak.</p>
+    </section>
+    
+  <footer style="text-align:center; margin:18px 0;">
+    <a href="{{ url_for('admin') }}" class="admin-link">Admin Paneli</a>
+  </footer>
+    
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Girişi</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <div class="login">
+      <h2>Admin Girişi</h2>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flash"><ul>{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul></div>
+        {% endif %}
+      {% endwith %}
+
+      <form method="post">
+        {{ form.hidden_tag() }}
+        <label for="username">Kullanıcı Adı:</label>
+        {{ form.username(size=32) }}
+
+        <label for="password">Parola:</label>
+        {{ form.password() }}
+        {{ form.submit() }}
+      </form>
+    </div>
+  </body>
+</html>

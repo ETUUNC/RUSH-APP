@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Üye Düzenle</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Üye Düzenle - {{ member['name'] }}</h1>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash"><ul>{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul></div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post">
+        {{ form.hidden_tag() }}
+        {# explicit token in case hidden_tag doesn't include it in some setups #}
+        {{ form.csrf_token }}
+        <div>
+            {{ form.name.label }}<br>
+            <!-- show existing name but disabled to prevent manual edits here -->
+            <input type="text" value="{{ member['name'] }}" disabled size="50">
+        </div>
+        <div>
+            {{ form.email.label }}<br>
+            <input type="email" value="{{ member['email'] }}" disabled size="50">
+        </div>
+        <div>
+            <!-- Toggle to enable phone editing. When unchecked the phone input is disabled and will not be submitted -->
+            <label style="font-weight:normal;"><input type="checkbox" id="change_phone_chk"> Telefonu düzenle</label><br>
+            {{ form.phone.label }}<br>
+            {{ form.phone(size=20, id='phone_input', disabled=True) }}
+        </div>
+        <div>
+            {{ form.payment_status.label }}<br>
+            {{ form.payment_status() }}
+        </div>
+                <div>
+                        <label for="payment_date">Ödeme Tarihi (isteğe bağlı)</label><br>
+                        {% if member['payment_date'] %}
+                            {% set dt = member['payment_date']|replace(' ', 'T') %}
+                        {% else %}
+                            {% set dt = '' %}
+                        {% endif %}
+                        <input type="datetime-local" id="payment_date" name="payment_date" value="{{ dt }}">
+                </div>
+        <div style="margin-top:10px;">
+            {{ form.submit() }}
+            <a href="{{ url_for('admin') }}">İptal</a>
+        </div>
+    </form>
+</div>
+
+<script>
+// Toggle phone input enabled/disabled. When disabled, clear value so backend keeps existing phone.
+document.addEventListener('DOMContentLoaded', function () {
+    var chk = document.getElementById('change_phone_chk');
+    var phone = document.getElementById('phone_input');
+    if (!chk || !phone) return;
+    // initialize: leave disabled unless checkbox checked
+    phone.disabled = !chk.checked;
+    chk.addEventListener('change', function () {
+        if (chk.checked) {
+            phone.disabled = false;
+        } else {
+            // clear phone so backend uses existing value
+            phone.value = '';
+            phone.disabled = true;
+        }
+    });
+});
+</script>
+
+</body>
+</html>

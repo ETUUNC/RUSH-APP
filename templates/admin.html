@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Paneli</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Paneli - Üye Listesi</h1>
+
+    <div class="top-actions">
+      <a class="button" href="{{ url_for('index') }}">Ana Sayfa</a>
+      {% if admin_logged_in %}
+      <form method="post" action="{{ url_for('logout') }}" style="display:inline; margin-left:8px;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="button">Çıkış Yap</button>
+      </form>
+      {% endif %}
+    </div>
+
+        {# Flash messages #}
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="flash">
+              <ul>
+                {% for msg in messages %}
+                  <li>{{ msg }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <h2>Bekleyen Kayıtlar</h2>
+        {% if not pending %}
+            <div class="no-members">Bekleyen kayıt yok.</div>
+        {% else %}
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ad Soyad</th>
+                <th>Email</th>
+                <th>Telefon</th>
+                <th>Ödeme Durumu</th>
+                <th>İşlemler</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for member in pending %}
+            {% set status = (member['payment_status'] if 'payment_status' in member.keys() else '') %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ member['name'] }}</td>
+                <td>{{ member['email'] }}</td>
+                <td>{{ member['phone'] }}</td>
+                <td class="status {% if status|lower == 'ödendi' %}status-odendi{% elif status|lower == 'iptal' %}status-iptal{% else %}status-bekliyor{% endif %}">
+                  {{ status }}
+                  {% if member['payment_date'] %}
+                    <div style="font-size:0.9em;color:#666;">(Ödendi: {{ member['payment_date']|format_datetime }})</div>
+                  {% endif %}
+                </td>
+                <td>
+                  <!-- Approve / Reject forms for pending -->
+                  <form method="post" action="{{ url_for('admin_action') }}" style="display:inline;">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <input type="hidden" name="action" value="approve">
+                      <input type="hidden" name="member_id" value="{{ member['id'] }}">
+                      <button type="submit">Onayla</button>
+                  </form>
+                  <form method="post" action="{{ url_for('admin_action') }}" style="display:inline; margin-left:8px;" onsubmit="return confirm('Bu üyeyi reddetmek istediğinizden emin misiniz?');">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <input type="hidden" name="action" value="reject">
+                      <input type="hidden" name="member_id" value="{{ member['id'] }}">
+                      <button type="submit">Reddet</button>
+                  </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+        <h2>Kayıtlı Üyeler</h2>
+        {% if not approved %}
+            <div class="no-members">Henüz onaylı üye yok.</div>
+        {% else %}
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ad Soyad</th>
+                <th>Email</th>
+                <th>Telefon</th>
+                <th>Ödeme Durumu</th>
+                <th>Onay Tarihi</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for member in approved %}
+            {% set status = (member['payment_status'] if 'payment_status' in member.keys() else '') %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ member['name'] }}</td>
+                <td>{{ member['email'] }}</td>
+                <td>{{ member['phone'] }}</td>
+                <td class="status {% if status|lower == 'ödendi' %}status-odendi{% elif status|lower == 'iptal' %}status-iptal{% else %}status-bekliyor{% endif %}">
+                  {{ status }}
+                  {% if member['payment_date'] %}
+                    <div style="font-size:0.9em;color:#666;">(Ödendi: {{ member['payment_date'] }})</div>
+                  {% endif %}
+                </td>
+                <td>{{ member['approved_at']|format_datetime }}</td>
+           <td>
+            <a href="{{ url_for('admin_edit', member_id=member['id']) }}">Düzenle</a>
+            <form method="post" action="{{ url_for('admin_action') }}" style="display:inline; margin-left:8px;">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="action" value="update_status">
+              <input type="hidden" name="member_id" value="{{ member['id'] }}">
+              <input type="hidden" name="new_status" value="Ödendi">
+              <button type="submit">Ödendi Yap</button>
+            </form>
+            <form method="post" action="{{ url_for('admin_action') }}" style="display:inline; margin-left:8px;" onsubmit="return confirm('Bu kaydı silmek istediğinize emin misiniz?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="action" value="delete">
+              <input type="hidden" name="member_id" value="{{ member['id'] }}">
+              <button type="submit">Sil</button>
+            </form>
+           </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+        <h2>Reddedilen Kayıtlar</h2>
+        {% if not rejected %}
+            <div class="no-members">Reddedilen kayıt yok.</div>
+        {% else %}
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ad Soyad</th>
+                <th>Email</th>
+                <th>Telefon</th>
+                <th>Ödeme</th>
+                <th>İşlemler</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for member in rejected %}
+            {% set status = (member['payment_status'] if 'payment_status' in member.keys() else '') %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ member['name'] }}</td>
+                <td>{{ member['email'] }}</td>
+                <td>{{ member['phone'] }}</td>
+                <td class="status {% if status|lower == 'ödendi' %}status-odendi{% elif status|lower == 'iptal' %}status-iptal{% else %}status-bekliyor{% endif %}">
+                  {{ status }}
+                  {% if member['payment_date'] %}
+                    <div style="font-size:0.9em;color:#666;">(Ödendi: {{ member['payment_date']|format_datetime }})</div>
+                  {% endif %}
+                </td>
+                <td>
+                  <form method="post" action="{{ url_for('admin_action') }}" style="display:inline;" onsubmit="return confirm('Bu kaydı geri almak istediğinize emin misiniz?');">
+                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                     <input type="hidden" name="action" value="unreject">
+                     <input type="hidden" name="member_id" value="{{ member['id'] }}">
+                     <button type="submit">Geri Al</button>
+                  </form>
+                  <form method="post" action="{{ url_for('admin_action') }}" style="display:inline; margin-left:8px;" onsubmit="return confirm('Bu kaydı silmek istediğinize emin misiniz?');">
+                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                     <input type="hidden" name="action" value="delete">
+                     <input type="hidden" name="member_id" value="{{ member['id'] }}">
+                     <button type="submit">Sil</button>
+                  </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+</body>
+</html>
