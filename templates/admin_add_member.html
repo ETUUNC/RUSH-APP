@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Üye Ekle</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Yeni Üye Ekle</h1>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash"><ul>{% for m in messages %}<li>{{ m }}</li>{% endfor %}</ul></div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.name.label }}<br>
+            {{ form.name(size=50) }}
+        </div>
+        <div>
+            {{ form.email.label }}<br>
+            {{ form.email(size=50) }}
+        </div>
+        <div>
+            {{ form.phone.label }}<br>
+            {{ form.phone(size=20) }}
+        </div>
+        <div style="margin-top:10px;">
+            {{ form.submit() }}
+            <a href="{{ url_for('admin') }}">İptal</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

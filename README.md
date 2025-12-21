@@ -1,8 +1,14 @@
-RUSH - Local development
+# RUSH - Üye Yönetim Sistemi
 
-Quick start
+Flask tabanlı üye kayıt ve admin yönetim sistemi.
 
-1. Create a virtual environment (optional but recommended) and install dependencies:
+## Kurulum ve Çalıştırma
+
+### 1. Gereksinimler
+- Python 3.8+
+- pip (Python paket yöneticisi)
+
+### 2. Sanal Ortam Oluşturma ve Bağımlılıkları Yükleme
 
 ```powershell
 python -m venv .venv
@@ -10,86 +16,140 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-2. Database creation
+### 3. Veritabanı Oluşturma
 
-The application will now create the SQLite database automatically on first run if the DB file
-is missing. The project now uses a project-local `rush.db` (created in the `RUSH/` folder next
-to the code). You can still create it manually with the included script if you prefer:
+Uygulama ilk çalıştırmada otomatik olarak `rush.db` dosyasını oluşturur. Manuel oluşturmak isterseniz:
 
 ```powershell
 python create_rush_db.py
 ```
 
-3. Run the app:
+### 4. Uygulamayı Başlatma
 
 ```powershell
 python app.py
 ```
 
-4. Open in browser: http://127.0.0.1:5000/
+Tarayıcınızda açın: http://127.0.0.1:5000/
 
-Default admin credentials
+---
 
-When the DB is created automatically the following default admin is inserted (you can change
-it later with `create_admin.py` or `insert_admin.py`):
+## Uygulama Kullanımı
 
-- username: admin
-- password: adminpass
+### Kullanıcı Tarafı
 
-Additionally, an admin account `leroleroo` with password `TUNÇ3031` has been added per project
-request.
+#### Üye Kaydı
+1. Ana sayfada **"Kayıt Ol"** butonuna tıklayın
+2. Formu doldurun:
+   - Ad Soyad
+   - E-Posta
+   - Telefon
+3. **"Kaydet"** butonuna tıklayın
+4. Kayıt başarılı olur ve admin onayı beklenir
 
-Notes
-- Templates and static assets live in `templates/` and `static/`.
-- CSRF protection is enabled; use the forms in the UI or ensure your test client sends the CSRF token and preserves session cookies.
-Bu proje küçük bir Flask uygulaması içerir (RUSH spor salonu).
+### Admin Paneli
 
-Gereksinimler:
-- Python 3.8+
-- dependencies: requirements.txt
+#### Admin Girişi
+1. Ana sayfada **"Admin Girişi"** butonuna tıklayın veya `/login` adresine gidin
+2. Giriş bilgileri:
+   - **Kullanıcı Adı:** `leroleroo`
+   - **Parola:** `TUNÇ3031`
+3. **"Giriş"** butonuna tıklayın
 
-Çalıştırma:
-1) Sanal ortam oluşturun ve etkinleştirin (Windows PowerShell):
+#### Admin Panel Özellikleri
 
-```powershell
-python -m venv venv; .\venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-```
+Admin panelinde 3 ana bölüm bulunur:
 
-2) Veritabanı dosyası `c:\Users\TUNÇ\Desktop\rush-app\rush.db` konumunda olmalıdır (orijinal projede bu yol kullanılıyor). Eğer yoksa, basit bir SQLite şeması oluşturun:
+##### 1. Bekleyen Kayıtlar
+Kullanıcıların yaptığı kayıtlar burada görünür.
+- **Onayla:** Üyeyi kayıtlı üyeler kısmına taşır
+- **Reddet:** Üyeyi reddedilenler kısmına taşır
 
-```sql
-CREATE TABLE admins (id INTEGER PRIMARY KEY, username TEXT UNIQUE, password_hash TEXT);
-CREATE TABLE members (id INTEGER PRIMARY KEY, name TEXT, email TEXT, phone TEXT, status TEXT, payment_status TEXT, payment_date TEXT, created_at TEXT, approved_at TEXT);
-```
+##### 2. Kayıtlı Üyeler
+Onaylanmış üyeler bu bölümde listelenir.
+- **Düzenle:** Üye bilgilerini düzenle (telefon, ödeme durumu, ödeme tarihi)
+- **Ödendi Yap:** Ödeme durumunu hızlıca "Ödendi" olarak işaretle
+- **Sil:** Üyeyi tamamen sil (geri alınamaz)
 
-3) Uygulamayı başlatın:
+##### 3. Reddedilen Kayıtlar
+Reddedilen üyeler burada görünür.
+- **Geri Al:** Üyeyi tekrar "Bekleyen Kayıtlar" bölümüne taşı
+- **Sil:** Üyeyi tamamen sil
 
-```powershell
-python app.py
-```
+#### Üye Ekleme (Admin)
+Admin, kullanıcı kaydı beklemeden direk üye ekleyebilir:
 
-Notlar:
-- `app.py` kısa bir admin giriş mekanizması sunar; production için secret key ve güvenlik iyileştirmeleri yapılmalıdır.
+1. Admin panelinde **"Üye Ekle"** butonuna tıklayın
+2. Formu doldurun:
+   - Ad Soyad
+   - E-Posta
+   - Telefon
+3. **"Kaydet"** butonuna tıklayın
+4. Üye **otomatik olarak onaylanmış** şekilde "Kayıtlı Üyeler" bölümüne eklenir
 
+#### Üye Düzenleme
+1. Kayıtlı üyeler listesinde ilgili üyenin yanındaki **"Düzenle"** linkine tıklayın
+2. Düzenlenebilir alanlar:
+   - **Telefon:** Değiştirmek için checkbox'ı işaretleyin
+   - **Ödeme Durumu:** Bekliyor, Ödendi, İptal
+   - **Ödeme Tarihi:** Tarih ve saat seçin (isteğe bağlı)
+3. **"Kaydet"** butonuna tıklayın
 
-Push to GitHub (ETUUNC)
+> **Not:** Ödeme durumu "Ödendi" seçildiğinde ödeme tarihi boş bırakılırsa, sistem otomatik olarak şu anki tarihi kaydeder.
 
-If you want to push this repository to your GitHub account `ETUUNC`, run the commands below from
-the `RUSH` folder. Replace the remote URL if you named the repository differently on GitHub.
+#### Ödeme Takibi
+- Sistem, 30 günden eski kayıtların ödeme durumunu otomatik olarak "Bekliyor" yapar
+- Admin girişinde, ödemesi tamamlanmamış üye sayısı bildirim olarak gösterilir
+- Ödeme durumları renkli olarak gösterilir:
+  - **Yeşil:** Ödendi
+  - **Kırmızı:** İptal
+  - **Sarı:** Bekliyor
+
+---
+
+## Güvenlik Notları
+
+- **Production için** `RUSH_SECRET_KEY` ortam değişkenini mutlaka ayarlayın
+- Admin şifresini değiştirmek için `create_admin.py` veya `insert_admin.py` scriptlerini kullanın
+- CSRF koruması aktif
+
+---
+
+## GitHub'a Yükleme (ETUUNC)
 
 ```powershell
 cd 'C:\Users\TUNÇ\Desktop\RUSH'
 git init
 git add .
-git commit -m "Initial import of RUSH"
+git commit -m "Initial commit"
 git remote add origin https://github.com/ETUUNC/rush-app.git
 git branch -M main
 git push -u origin main
 ```
 
-If you have the GitHub CLI (`gh`) configured with your account, you can create & push in one step:
+GitHub CLI ile:
 
 ```powershell
 gh repo create ETUUNC/rush-app --public --source=. --remote=origin --push
+```
+
+---
+
+## Dosya Yapısı
+
+```
+RUSH/
+├── app.py                  # Ana Flask uygulaması
+├── requirements.txt        # Python bağımlılıkları
+├── rush.db                # SQLite veritabanı (otomatik oluşturulur)
+├── static/
+│   ├── style.css          # CSS stilleri
+│   └── images/            # Görseller
+└── templates/
+    ├── index.html         # Ana sayfa
+    ├── register.html      # Kullanıcı kayıt formu
+    ├── login.html         # Admin giriş sayfası
+    ├── admin.html         # Admin paneli
+    ├── admin_add_member.html  # Admin üye ekleme
+    └── admin_edit.html    # Admin üye düzenleme
 ```

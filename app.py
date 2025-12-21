@@ -293,6 +293,27 @@ def admin_action():
     return redirect(url_for('admin'))
 
 
+@app.route('/admin/add', methods=['GET', 'POST'])
+def admin_add_member():
+    if not require_admin():
+        return redirect(url_for('login'))
+    form = RegisterForm()
+    if form.validate_on_submit():
+        db = get_db()
+        try:
+            now = datetime.utcnow().isoformat()
+            db.execute(
+                'INSERT INTO members (name, email, phone, status, created_at, approved_at) VALUES (?,?,?,?,?,?)',
+                (form.name.data, form.email.data, form.phone.data, 'approved', now, now),
+            )
+            db.commit()
+            flash('Üye başarıyla eklendi ve onaylandı.')
+            return redirect(url_for('admin'))
+        except Exception as e:
+            flash('Üye eklenirken hata oluştu: ' + str(e))
+    return render_template('admin_add_member.html', form=form)
+
+
 @app.route('/admin/edit/<int:member_id>', methods=['GET', 'POST'])
 def admin_edit(member_id):
     if not require_admin():
