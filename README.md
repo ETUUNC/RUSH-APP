@@ -115,25 +115,7 @@ Admin, kullanıcı kaydı beklemeden direk üye ekleyebilir:
 
 ---
 
-## GitHub'a Yükleme (ETUUNC)
 
-```powershell
-cd 'C:\Users\TUNÇ\Desktop\RUSH'
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin https://github.com/ETUUNC/rush-app.git
-git branch -M main
-git push -u origin main
-```
-
-GitHub CLI ile:
-
-```powershell
-gh repo create ETUUNC/rush-app --public --source=. --remote=origin --push
-```
-
----
 
 ## Dosya Yapısı
 
